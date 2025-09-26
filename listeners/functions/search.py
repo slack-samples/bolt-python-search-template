@@ -1,24 +1,115 @@
+from datetime import datetime
 import logging
 import urllib
 import json
-from typing import TypedDict, List, Optional, Dict, Union, cast
-import concurrent.futures
+from typing import Optional, Dict, Any
 
 from slack_bolt import Ack, Complete, Fail
 
 
-class EntityReference(TypedDict):
-    id: str
-    type: Optional[str]
+class EntityReference:
+    """Reference to an external entity"""
+    def __init__(self, id: str, type: Optional[str] = None):
+        self.id = id
+        self.type = type
 
 
-class SearchResult(TypedDict):
-    title: str
-    description: str
-    link: str
-    date_updated: str
-    content: Optional[str]
-    external_ref: EntityReference
+class SearchResult:
+    """Search result returned to Slack"""
+    def __init__(self, title: str, description: str, link: str, date_updated: str,
+                content: Optional[str], external_ref: EntityReference):
+        self.title = title
+        self.description = description
+        self.link = link
+        self.date_updated = date_updated
+        self.content = content
+        self.external_ref = external_ref
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary for Slack API"""
+        return {
+            "title": self.title,
+            "description": self.description,
+            "link": self.link,
+            "date_updated": self.date_updated,
+            "content": self.content,
+            "external_ref": {"id": self.external_ref.id, "type": self.external_ref.type} if self.external_ref.type else {"id": self.external_ref.id}
+        }
+
+
+class Edition:
+    """Represents an edition of a book"""
+    def __init__(self, data: Dict[str, Any]):
+        self.key = data.get("key", "")
+        self.title = data.get("title", "")
+        self.publish_date = data.get("publish_date", [])
+        self.description = data.get("description", "")
+
+
+class Book:
+    """Represents a book from Open Library API"""
+    def __init__(self, data: Dict[str, Any]):
+        self.title = data.get("title", "")
+        self.key = data.get("key", "")
+        self.author_name = data.get("author_name", [])
+        self.publish_date = data.get("publish_date", [])
+        
+        # Parse editions if available
+        self.editions = []
+        if "editions" in data and "docs" in data["editions"]:
+            for edition_data in data["editions"]["docs"]:
+                self.editions.append(Edition(edition_data))
+
+
+class SearchResults:
+    """Search results from Open Library API"""
+    def __init__(self, data: Dict[str, Any]):
+        self.numFound = data.get("numFound", 0)
+        self.start = data.get("start", 0)
+        self.numFoundExact = data.get("numFoundExact", False)
+        self.q = data.get("q", "")
+        self.docs = []
+        
+        # Process and filter docs
+        for doc in data.get("docs", [])[:50]:
+            # Check required fields
+            if "key" not in doc or "title" not in doc:
+                continue
+                
+            # Check editions
+            if "editions" not in doc or "docs" not in doc["editions"] or not doc["editions"]["docs"]:
+                continue
+                
+            edition = doc["editions"]["docs"][0]
+            if "description" not in edition or not edition.get("publish_date"):
+                continue
+                
+            # Add valid book
+            self.docs.append(Book(doc))
+
+
+def convert_to_iso(date_string: str) -> str:
+    """Convert date string to ISO format"""
+    formats = [
+        "%b %d, %Y",     # "Nov 21, 2002"
+        "%B %Y",         # "February 2001"
+        "%Y",            # "2021"
+        "%Y-%m-%d",      # "1980-01-01"
+        "%d %B %Y",      # "20 dezembro 2021"
+        "%b %d, %Y",     # "Sep 30, 2001" 
+        "%Y/%m/%d",      # "1977/1980"
+        "%Y %B",         # "2001 August"
+        "%B %d, %Y"      # "January 5, 1998"
+    ]
+    
+    for fmt in formats:
+        try:
+            dt = datetime.strptime(date_string, fmt)
+            return dt.strftime("%Y-%m-%d")
+        except ValueError:
+            continue
+    
+    return "2023-01-01"  # Default if no format works
 
 
 def handle_search_event(ack: Ack, inputs: dict, fail: Fail, complete: Complete, logger: logging.Logger):
@@ -30,29 +121,30 @@ def handle_search_event(ack: Ack, inputs: dict, fail: Fail, complete: Complete, 
     logger.info(f"selected filters: {filters}")
 
     try:
+        # Fetch search results
         search_data = fetch_open_library_search(query)
-
-        search_results: List[SearchResult] = []
-
-        with concurrent.futures.ThreadPoolExecutor(max_workers=50) as executor:
-            works = list(executor.map(fetch_open_library_work, [doc["key"] for doc in search_data["docs"]]))
         
-        for work in works:
-            work['key']
-            if not "description" in work:
-                continue
-            description = work["description"] if isinstance(work["description"], str) else work["description"]["value"]
-            search_results.append(
-                {
-                    "title": work["title"],
-                    "description": description,
-                    "link": f"https://openlibrary.org/{work['key']}",
-                    "date_updated": work["created"]["value"],
-                    "content": description,
-                    "external_ref": {"id": work['key']},
-                }
+        # Convert to Slack search results
+        search_result = []
+        for book in search_data.docs:
+            edition = book.editions[0]
+            
+            date_string = edition.publish_date[0] if edition.publish_date else "2000"
+            date_updated = convert_to_iso(date_string)
+            
+            result = SearchResult(
+                title=book.title,
+                description=edition.description,
+                link=f"https://openlibrary.org{book.key}",
+                date_updated=date_updated,
+                content=edition.description,
+                external_ref=EntityReference(id=book.key)
             )
-        complete(outputs={"search_result": search_results})
+            
+            search_result.append(result.to_dict())
+            
+        logger.info(f"Found {len(search_result)} search results")
+        complete(outputs={"search_result": search_result})
     except Exception as e:
         logger.exception(e)
         fail(f"Failed to complete the step: {e}")
@@ -60,88 +152,15 @@ def handle_search_event(ack: Ack, inputs: dict, fail: Fail, complete: Complete, 
         ack()
 
 
-class BookDict(TypedDict, total=False):
-    """TypedDict representing a book item from Open Library API"""
-
-    title: str
-    author_name: List[str]
-    cover_i: Optional[int]
-    first_publish_year: Optional[int]
-    key: str
-    edition_count: int
-    language: List[str]
-    ebook_access: str
-
-
-class SearchResultsDict(TypedDict, total=False):
-    """TypedDict representing search results from Open Library API"""
-
-    numFound: int
-    start: int
-    numFoundExact: bool
-    q: str
-    docs: List[BookDict]
-
-
-class DateTimeValue(TypedDict):
-    type: str
-    value: str
-
-
-class AuthorRef(TypedDict):
-    key: str
-
-
-class ExcerptAuthor(TypedDict):
-    key: str
-
-
-class TextValue(TypedDict):
-    type: str
-    value: str
-
-
-class WorkDict(TypedDict, total=False):
-    """TypedDict representing a work item from Open Library API"""
-
-    description: Optional[Union[TextValue, str]]
-    title: str
-    covers: List[int]
-    subject_places: List[str]
-    first_publish_date: str
-    subject_people: List[str]
-    key: str
-    subjects: List[str]
-    subject_times: List[str]
-    cover_edition: Dict[str, str]
-    created: DateTimeValue
-    last_modified: DateTimeValue
-
-
-def fetch_open_library_search(query: str) -> SearchResultsDict:
-    url = f"https://openlibrary.org/search.json?q={urllib.parse.quote_plus(query)}"
+def fetch_open_library_search(query: str) -> SearchResults:
+    """Fetch search results from Open Library API"""
+    url = f"https://openlibrary.org/search.json?q={urllib.parse.quote_plus(query)}&fields=key,title,author_name,editions,description,publish_date"
     req = urllib.request.Request(url)
 
     with urllib.request.urlopen(req) as response:
         data = response.read()
         json_data = json.loads(data.decode("utf-8"))
-
-        results = cast(SearchResultsDict, json_data)
-
-        if "docs" in results and len(results["docs"]) > 10:
-            results["docs"] = results["docs"][:10]
-
+        
+        # Convert JSON to SearchResults object
+        results = SearchResults(json_data)
         return results
-
-
-def fetch_open_library_work(key: str) -> WorkDict:
-    url = f"https://openlibrary.org/{key}.json"
-    req = urllib.request.Request(url)
-
-    with urllib.request.urlopen(req) as response:
-        data = response.read()
-        json_data = json.loads(data.decode("utf-8"))
-
-        # Cast to ensure proper typing
-        result = cast(WorkDict, json_data)
-        return result
