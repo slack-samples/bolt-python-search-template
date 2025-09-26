@@ -1,0 +1,102 @@
+{
+	"display_information": {
+		"name": "bolt-py-search"
+	},
+	"features": {
+		"app_home": {
+			"home_tab_enabled": false,
+			"messages_tab_enabled": false
+		},
+		"bot_user": {
+			"display_name": "bolt-py-search",
+			"always_online": true
+		},
+		"search": {
+			"search_function_callback_id": "search",
+			"search_filters_function_callback_id": "filters",
+			"enable_ai_answers": true
+		}
+	},
+	"oauth_config": {
+		"scopes": {
+			"bot": [
+				"chat:write"
+			]
+		}
+	},
+	"settings": {
+		"event_subscriptions": {
+			"bot_events": [
+				"function_executed"
+			]
+		},
+		"interactivity": {
+			"is_enabled": false
+		},
+		"org_deploy_enabled": true,
+		"socket_mode_enabled": true,
+		"token_rotation_enabled": false,
+		"hermes_app_type": "remote",
+		"function_runtime": "remote"
+	},
+	"functions": {
+		"filters": {
+			"title": "Sample filters",
+			"description": "Returns the filters for the search function",
+			"input_parameters": {
+				"user_context": {
+					"type": "slack#/types/user_context",
+					"title": "User Context",
+					"description": "The context of the user executing a search",
+					"is_required": true,
+					"name": "user_context"
+				}
+			},
+			"output_parameters": {
+				"filters": {
+					"type": "slack#/types/search_filters",
+					"title": "Search Filters",
+					"description": "An array containing the available filters for the search",
+					"is_required": true,
+					"name": "filters"
+				}
+			}
+		},
+		"search": {
+			"title": "Sample search",
+			"description": "Returns the available search result given the query and filter",
+			"input_parameters": {
+				"query": {
+					"type": "string",
+					"title": "Query",
+					"description": "The search query entered by the user",
+					"is_required": true,
+					"name": "query"
+				},
+				"filters": {
+					"type": "object",
+					"title": "Filters",
+					"description": "The filters selected by the user",
+					"is_required": true,
+					"name": "filters"
+				},
+				"user_context": {
+					"type": "slack#/types/user_context",
+					"title": "User Context",
+					"description": "The context of the user executing a search",
+					"is_required": true,
+					"name": "user_context"
+				}
+			},
+			"output_parameters": {
+				"search_result": {
+					"type": "slack#/types/search_results",
+					"title": "Search Result",
+					"description": "An array containing the search results based on the inputs",
+					"is_required": true,
+					"name": "search_result"
+				}
+			}
+		}
+	}
+}
