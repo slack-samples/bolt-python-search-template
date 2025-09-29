@@ -1,9 +1,9 @@
-
 from enum import Enum
 import logging
 from typing import Optional, TypedDict, List
 
 from slack_bolt import Ack, Complete, Fail
+
 
 class FilterType(Enum):
     MULTI_SELECT = "multi_select"
@@ -21,14 +21,12 @@ class SearchFilter(TypedDict):
     filter_type: FilterType
     options: Optional[List[FilterOptions]]
 
-def handle_filters_event(
-    ack: Ack, inputs: dict, fail: Fail, complete: Complete, logger: logging.Logger
-):
+
+def handle_filters_event(ack: Ack, inputs: dict, fail: Fail, complete: Complete, logger: logging.Logger):
     # logger.info("Function inputs received:")
     # logger.info(f"inputs: {json.dumps(inputs, indent=2)}")
 
     try:
-
         filters: List[SearchFilter] = []
 
         complete(outputs={"filters": filters})
