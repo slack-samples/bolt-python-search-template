@@ -1,16 +1,16 @@
 {
 	"display_information": {
-		"name": "Slack Samples"
-		"description": "Sample search app in Bolt Python",
+		"name": "bolt-python-search"
 	},
 	"features": {
-		"app_home": {
-			"home_tab_enabled": false,
-			"messages_tab_enabled": false
-		},
 		"bot_user": {
-			"display_name": "bolt-py-search",
+			"display_name": "bolt-python-search",
 			"always_online": true
+		},
+		"rich_previews": {
+			"entity_types": [
+				"slack#/entities/item"
+			]
 		},
 		"search": {
 			"search_function_callback_id": "search",
@@ -28,8 +28,8 @@
 	"settings": {
 		"event_subscriptions": {
 			"bot_events": [
-				"entity_details_requested",
-				"function_executed"
+				"function_executed",
+				"entity_details_requested"
 			]
 		},
 		"interactivity": {
@@ -43,7 +43,7 @@
 	},
 	"functions": {
 		"filters": {
-			"title": "Sample Filter Function",
+			"title": "Sample filters",
 			"description": "The filter function is used to define the filters for search results",
 			"input_parameters": {
 				"user_context": {
@@ -65,8 +65,8 @@
 			}
 		},
 		"search": {
-			"title": "Sample Search Function",
-			"description": "The search function is used to return search results from the data source based on the filters and query entered by the user",
+			"title": "Sample search",
+			"description": "Returns the available search result given the query and filter",
 			"input_parameters": {
 				"query": {
 					"type": "string",
