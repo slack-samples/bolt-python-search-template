@@ -11,7 +11,6 @@ class TestEntityDetailsRequested:
         self.mock_client = MagicMock(spec=WebClient)
         self.mock_logger = MagicMock()
 
-        # Sample mock data
         self.mock_sample_data = {
             "ok": True,
             "samples": [
@@ -33,7 +32,6 @@ class TestEntityDetailsRequested:
             ],
         }
 
-        # Event payload
         self.event_payload = {
             "trigger_id": "123.456.abc",
             "link": {"url": "https://example.com/1"},

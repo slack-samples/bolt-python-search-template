@@ -33,7 +33,7 @@
 			]
 		},
 		"interactivity": {
-			"is_enabled": true
+			"is_enabled": false
 		},
 		"org_deploy_enabled": true,
 		"socket_mode_enabled": true,
@@ -44,7 +44,7 @@
 	"functions": {
 		"filters": {
 			"title": "Sample filters",
-			"description": "Returns the filters for the search function",
+			"description": "The filter function is used to define the filters for search results",
 			"input_parameters": {
 				"user_context": {
 					"type": "slack#/types/user_context",
