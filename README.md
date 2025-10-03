@@ -98,7 +98,7 @@ python3 app.py
 ruff check
 
 # Run ruff from root directory for formatting
-ruff format
+ruff format && ruff check --fix
 ```
 
 ## Testing

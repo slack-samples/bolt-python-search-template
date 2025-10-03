@@ -1,5 +1,5 @@
-from ast import List
 import logging
+from ast import List
 from typing import NotRequired, Optional, TypedDict
 
 from slack_bolt import Ack, Complete, Fail
@@ -7,8 +7,12 @@ from slack_sdk import WebClient
 
 from listeners.sample_data_fetcher import SlackResponseError, fetch_sample_data
 
+SEARCH_PROCESSING_ERROR_MSG = (
+    "We encountered an issue processing your search results. "
+    "Please try again or contact the app owner if the problem persists."
+)
 
-SEARCH_PROCESSING_ERROR_MSG = "We encountered an issue processing your search results. Please try again or contact the app owner if the problem persists."
+print(SEARCH_PROCESSING_ERROR_MSG)
 
 
 class EntityReference(TypedDict):

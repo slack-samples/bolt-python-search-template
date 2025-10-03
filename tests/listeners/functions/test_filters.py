@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 from slack_bolt import Ack, Complete, Fail
 
-from listeners.functions.filters import filters_step_callback, FILTER_PROCESSING_ERROR_MSG
+from listeners.functions.filters import FILTER_PROCESSING_ERROR_MSG, filters_step_callback
 
 
 class TestFilters:
@@ -71,6 +71,7 @@ class TestFilters:
 
         self.mock_fail.assert_called_once()
         call_args = self.mock_fail.call_args
+        print(FILTER_PROCESSING_ERROR_MSG)
         assert call_args.kwargs["error"] == FILTER_PROCESSING_ERROR_MSG
 
         self.mock_ack.assert_called_once()

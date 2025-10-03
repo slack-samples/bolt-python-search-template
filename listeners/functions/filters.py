@@ -1,5 +1,5 @@
-from enum import Enum
 import logging
+from enum import Enum
 from typing import List, Optional, TypedDict
 
 from slack_bolt import Ack, Complete, Fail
