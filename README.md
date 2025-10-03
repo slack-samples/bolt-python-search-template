@@ -82,8 +82,8 @@ cd bolt-python-search-template
 python3 -m venv .venv
 source .venv/bin/activate
 
-# Install the dependencies
-pip install .
+# Install all the dependencies
+pip install -e ".[dev]" 
 
 # Start your local server
 python3 app.py
