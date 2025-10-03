@@ -53,6 +53,7 @@ def handle_search_step_event(
 ):
 
     try:
+        query = inputs.get("query")
         languages_filter = inputs.get("filters", {}).get("languages", [])
         type_filter = inputs.get("filters", {}).get("type", [])
 
@@ -63,11 +64,17 @@ def handle_search_step_event(
             if len(type_filter) == 1:
                 filters_payload["type"] = type_filter[0]
 
+        params = {
+            "filters": json.dumps(filters_payload)
+        }
+        if query:
+            params["query"] = query
+
         logger.info(f"Calling developer.sampleData.get with filters: {filters_payload}")
 
         response = client.api_call(
             api_method="developer.sampleData.get",
-            params={"filters": json.dumps(filters_payload)}
+            params=params
         )
 
         if not response.get("ok"):
