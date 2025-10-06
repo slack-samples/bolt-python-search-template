@@ -8,10 +8,12 @@ version = "0.0.0"
 description = "Slack app using Bolt Python for search functionality"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = ["slack-bolt==1.25.0"]
-
-[project.optional-dependencies]
-dev = ["pytest==8.4.1", "ruff==0.12.11", "slack-cli-hooks<1.0.0"]
+dependencies = [
+	"slack-bolt==1.25.0",
+	"pytest==8.4",
+	"ruff==0.12",
+	"slack-cli-hooks<1",
+]
 
 [tool.setuptools.packages.find]
 include = ["*"]

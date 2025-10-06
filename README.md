@@ -27,7 +27,7 @@ slack login
 #### Initializing the project
 
 ```sh
-slack create bolt-python-search --template slack-samples/bolt-python-search-template -branch init
+slack create bolt-python-search --template slack-samples/bolt-python-search-template
 cd bolt-python-search
 
 # Setup your python virtual environment
@@ -35,7 +35,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 
 # Install the dependencies
-pip install .
+pip install -e . 
 ```
 
 #### Creating the Slack app
@@ -86,7 +86,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 
 # Install all the dependencies
-pip install -e ".[dev]" 
+pip install -e . 
 
 # Start your local server
 python3 app.py
