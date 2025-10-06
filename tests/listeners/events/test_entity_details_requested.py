@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 from slack_sdk import WebClient
 
 from listeners.events.entity_details_requested import entity_details_requested_callback
-from listeners.sample_data_fetcher import SlackResponseError
+from listeners.sample_data_service import SlackResponseError
 
 
 class TestEntityDetailsRequested:

@@ -5,7 +5,7 @@ from typing import NotRequired, Optional, TypedDict
 from slack_bolt import Ack, Complete, Fail
 from slack_sdk import WebClient
 
-from listeners.sample_data_fetcher import SlackResponseError, fetch_sample_data
+from listeners.sample_data_service import SlackResponseError, fetch_sample_data
 
 SEARCH_PROCESSING_ERROR_MSG = (
     "We encountered an issue processing your search results. "

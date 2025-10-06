@@ -2,7 +2,7 @@ import logging
 
 from slack_sdk import WebClient
 
-from listeners.sample_data_fetcher import SlackResponseError, fetch_sample_data
+from listeners.sample_data_service import SlackResponseError, fetch_sample_data
 
 
 def entity_details_requested_callback(event: dict, client: WebClient, logger: logging.Logger):

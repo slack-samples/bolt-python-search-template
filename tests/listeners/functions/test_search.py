@@ -4,7 +4,7 @@ from slack_bolt import Ack, Complete, Fail
 from slack_sdk import WebClient
 
 from listeners.functions.search import SEARCH_PROCESSING_ERROR_MSG, search_step_callback
-from listeners.sample_data_fetcher import SlackResponseError
+from listeners.sample_data_service import SlackResponseError
 
 
 class TestSearch:
