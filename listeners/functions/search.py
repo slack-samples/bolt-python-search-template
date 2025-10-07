@@ -60,11 +60,13 @@ def search_step_callback(ack: Ack, inputs: dict, fail: Fail, complete: Complete,
         ]
 
         complete(outputs={"search_result": results})
-    except SlackResponseError as e:
-        logger.error(f"Failed to fetch or parse sample data. Error details: {str(e)}", exc_info=e)
-        fail(error=SEARCH_PROCESSING_ERROR_MSG)
     except Exception as e:
-        logger.error(f"Unexpected error occurred while processing search request: {type(e).__name__} - {str(e)}", exc_info=e)
-        fail(error=SEARCH_PROCESSING_ERROR_MSG)
+        if isinstance(e, SlackResponseError):
+            logger.error(f"Failed to fetch or parse sample data. Error details: {str(e)}", exc_info=e)
+            fail(error=SEARCH_PROCESSING_ERROR_MSG)
+        else:
+            logger.error(
+                f"Unexpected error occurred while processing search request: {type(e).__name__} - {str(e)}", exc_info=e
+            )
     finally:
         ack()
