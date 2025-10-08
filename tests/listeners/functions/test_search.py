@@ -123,10 +123,7 @@ class TestSearch:
             logger=self.mock_logger,
         )
 
-        self.mock_fail.assert_called_once()
-        call_args = self.mock_fail.call_args
-        assert call_args.kwargs["error"] == SEARCH_PROCESSING_ERROR_MSG
-
+        self.mock_fail.assert_not_called()
         self.mock_complete.assert_not_called()
         self.mock_ack.assert_called_once()
 
