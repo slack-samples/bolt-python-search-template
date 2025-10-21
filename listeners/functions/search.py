@@ -1,10 +1,10 @@
 import logging
-from ast import List
-from typing import NotRequired, Optional, TypedDict
+from typing import List, NotRequired, Optional, TypedDict
 
 from slack_bolt import Ack, Complete, Fail
 from slack_sdk import WebClient
 
+from listeners.filters import LANGUAGES_FILTER, SAMPLES_FILTER
 from listeners.sample_data_service import SlackResponseError, fetch_sample_data
 
 SEARCH_PROCESSING_ERROR_MSG = (
@@ -29,21 +29,19 @@ class SearchResult(TypedDict):
     content: NotRequired[str]
 
 
-def search_step_callback(ack: Ack, inputs: dict, fail: Fail, complete: Complete, client: WebClient, logger: logging.Logger):
+def search_step_callback(
+    ack: Ack,
+    inputs: dict,
+    fail: Fail,
+    complete: Complete,
+    client: WebClient,
+    logger: logging.Logger,
+):
     try:
         query = inputs.get("query")
-        filters = inputs.get("filters", {})
-        languages_filter = filters.get("languages", [])
-        type_filter = filters.get("type", [])
+        filters = inputs.get("filters")
 
-        filters_payload = {}
-        if languages_filter:
-            filters_payload["languages"] = languages_filter
-        if type_filter:
-            if len(type_filter) == 1:
-                filters_payload["type"] = type_filter[0]
-
-        response = fetch_sample_data(client=client, query=query, filters=filters_payload, logger=logger)
+        response = fetch_sample_data(client=client, query=query, filters=filters, logger=logger)
 
         samples = response.get("samples", [])
 
@@ -66,7 +64,8 @@ def search_step_callback(ack: Ack, inputs: dict, fail: Fail, complete: Complete,
             fail(error=SEARCH_PROCESSING_ERROR_MSG)
         else:
             logger.error(
-                f"Unexpected error occurred while processing search request: {type(e).__name__} - {str(e)}", exc_info=e
+                f"Unexpected error occurred while processing search request: {type(e).__name__} - {str(e)}",
+                exc_info=e,
             )
     finally:
         ack()
