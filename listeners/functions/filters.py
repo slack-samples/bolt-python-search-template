@@ -1,5 +1,6 @@
 import logging
 from dataclasses import asdict
+from typing import Dict
 
 from slack_bolt import Ack, Complete, Fail
 
@@ -9,7 +10,9 @@ FILTER_PROCESSING_ERROR_MSG = (
     "We encountered an issue processing filter results. Please try again or contact the app owner if the problem persists."
 )
 
-filter_none = lambda items: {k: v for k, v in items if v is not None}
+def filter_none(items: Dict):
+    return {k: v for k, v in items if v is not None}
+
 
 def filters_step_callback(ack: Ack, inputs: dict, fail: Fail, complete: Complete, logger: logging.Logger):
     try:

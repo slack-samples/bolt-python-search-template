@@ -15,8 +15,9 @@ class TestFilters:
         self.expected_filters = [
             {
                 "name": "languages",
-                "display_name": "Languages",
+                "display_name": "Language",
                 "type": "multi_select",
+                "display_name_plural": "Languages",
                 "options": [
                     {"name": "Python", "value": "python"},
                     {"name": "Java", "value": "java"},
