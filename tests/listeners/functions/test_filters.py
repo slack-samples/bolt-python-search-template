@@ -85,7 +85,6 @@ class TestFilters:
 
         self.mock_fail.assert_called_once()
         call_args = self.mock_fail.call_args
-        print(FILTER_PROCESSING_ERROR_MSG)
         assert call_args.kwargs["error"] == FILTER_PROCESSING_ERROR_MSG
 
         self.mock_ack.assert_called_once()
