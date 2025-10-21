@@ -15,8 +15,9 @@ class TestFilters:
         self.expected_filters = [
             {
                 "name": "languages",
-                "display_name": "Languages",
+                "display_name": "Language",
                 "type": "multi_select",
+                "display_name_plural": "Languages",
                 "options": [
                     {"name": "Python", "value": "python"},
                     {"name": "Java", "value": "java"},
@@ -25,13 +26,14 @@ class TestFilters:
                 ],
             },
             {
-                "name": "type",
-                "display_name": "Type",
-                "type": "multi_select",
-                "options": [
-                    {"name": "Template", "value": "template"},
-                    {"name": "Sample", "value": "sample"},
-                ],
+                "name": "template",
+                "display_name": "Templates",
+                "type": "toggle",
+            },
+            {
+                "name": "sample",
+                "display_name": "Samples",
+                "type": "toggle",
             },
         ]
 
@@ -39,7 +41,11 @@ class TestFilters:
         inputs = {"user_context": {"id": "U123456"}}
 
         filters_step_callback(
-            ack=self.mock_ack, inputs=inputs, fail=self.mock_fail, complete=self.mock_complete, logger=self.mock_logger
+            ack=self.mock_ack,
+            inputs=inputs,
+            fail=self.mock_fail,
+            complete=self.mock_complete,
+            logger=self.mock_logger,
         )
 
         self.mock_complete.assert_called_once()
@@ -52,7 +58,11 @@ class TestFilters:
 
     def test_filters_step_callback_empty_user_context(self):
         filters_step_callback(
-            ack=self.mock_ack, inputs={}, fail=self.mock_fail, complete=self.mock_complete, logger=self.mock_logger
+            ack=self.mock_ack,
+            inputs={},
+            fail=self.mock_fail,
+            complete=self.mock_complete,
+            logger=self.mock_logger,
         )
 
         self.mock_complete.assert_called_once()
@@ -66,12 +76,15 @@ class TestFilters:
         self.mock_complete.side_effect = Exception("Unexpected error")
 
         filters_step_callback(
-            ack=self.mock_ack, inputs={}, fail=self.mock_fail, complete=self.mock_complete, logger=self.mock_logger
+            ack=self.mock_ack,
+            inputs={},
+            fail=self.mock_fail,
+            complete=self.mock_complete,
+            logger=self.mock_logger,
         )
 
         self.mock_fail.assert_called_once()
         call_args = self.mock_fail.call_args
-        print(FILTER_PROCESSING_ERROR_MSG)
         assert call_args.kwargs["error"] == FILTER_PROCESSING_ERROR_MSG
 
         self.mock_ack.assert_called_once()

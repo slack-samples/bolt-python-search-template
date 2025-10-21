@@ -3,6 +3,7 @@ from unittest.mock import MagicMock, patch
 from slack_bolt import Ack, Complete, Fail
 from slack_sdk import WebClient
 
+from listeners.filters import LANGUAGES_FILTER, SAMPLES_FILTER, TEMPLATES_FILTER
 from listeners.functions.search import SEARCH_PROCESSING_ERROR_MSG, search_step_callback
 from listeners.sample_data_service import SlackResponseError
 
@@ -40,7 +41,9 @@ class TestSearch:
     def test_search_step_callback_success(self, mock_fetch_sample_data):
         mock_fetch_sample_data.return_value = self.mock_sample_data
 
-        inputs = {"query": "test query", "filters": {"languages": ["python"], "type": ["code"]}}
+        filters = {LANGUAGES_FILTER.name: ["python"]}
+
+        inputs = {"query": "test query", "filters": filters}
 
         search_step_callback(
             ack=self.mock_ack,
@@ -54,17 +57,45 @@ class TestSearch:
         mock_fetch_sample_data.assert_called_once_with(
             client=self.mock_client,
             query="test query",
-            filters={"languages": ["python"], "type": "code"},
+            filters=filters,
             logger=self.mock_logger,
         )
 
         self.mock_complete.assert_called_once()
         call_args = self.mock_complete.call_args
         outputs = call_args.kwargs["outputs"]
+
         assert outputs["search_result"] == self.mock_sample_data["samples"]
 
         self.mock_ack.assert_called_once()
         self.mock_fail.assert_not_called()
+
+    @patch("listeners.functions.search.fetch_sample_data")
+    def test_search_step_callback_multiple_filter_types(self, mock_fetch_sample_data):
+        mock_fetch_sample_data.return_value = self.mock_sample_data
+
+        filters = {TEMPLATES_FILTER.name: True, SAMPLES_FILTER.name: True, LANGUAGES_FILTER.name: ["python", "javascript"]}
+
+        inputs = {"query": "test query", "filters": filters}
+
+        search_step_callback(
+            ack=self.mock_ack,
+            inputs=inputs,
+            fail=self.mock_fail,
+            complete=self.mock_complete,
+            client=self.mock_client,
+            logger=self.mock_logger,
+        )
+
+        mock_fetch_sample_data.assert_called_once_with(
+            client=self.mock_client,
+            query="test query",
+            filters=filters,
+            logger=self.mock_logger,
+        )
+
+        self.mock_complete.assert_called_once()
+        self.mock_ack.assert_called_once()
 
     @patch("listeners.functions.search.fetch_sample_data")
     def test_search_step_callback_no_filters(self, mock_fetch_sample_data):
@@ -80,7 +111,7 @@ class TestSearch:
         )
 
         mock_fetch_sample_data.assert_called_once_with(
-            client=self.mock_client, query="test query", filters={}, logger=self.mock_logger
+            client=self.mock_client, query="test query", filters=None, logger=self.mock_logger
         )
 
         self.mock_complete.assert_called_once()
@@ -123,27 +154,8 @@ class TestSearch:
             logger=self.mock_logger,
         )
 
+        self.mock_logger.error.assert_called_once()
+
         self.mock_fail.assert_not_called()
         self.mock_complete.assert_not_called()
         self.mock_ack.assert_called_once()
-
-    @patch("listeners.functions.search.fetch_sample_data")
-    def test_search_step_callback_multiple_type_filters(self, mock_fetch_sample_data):
-        mock_fetch_sample_data.return_value = {"samples": []}
-
-        inputs = {"query": "test query", "filters": {"type": ["code", "document"]}}
-
-        search_step_callback(
-            ack=self.mock_ack,
-            inputs=inputs,
-            fail=self.mock_fail,
-            complete=self.mock_complete,
-            client=self.mock_client,
-            logger=self.mock_logger,
-        )
-
-        mock_fetch_sample_data.assert_called_once_with(
-            client=self.mock_client, query="test query", filters={}, logger=self.mock_logger
-        )
-
-        self.mock_complete.assert_called_once()
