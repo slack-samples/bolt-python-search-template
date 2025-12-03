@@ -14,8 +14,7 @@
 		},
 		"search": {
 			"search_function_callback_id": "search",
-			"search_filters_function_callback_id": "filters",
-			"enable_ai_answers": true
+			"search_filters_function_callback_id": "filters"
 		}
 	},
 	"oauth_config": {
