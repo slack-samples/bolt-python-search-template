@@ -65,7 +65,7 @@ class TestSearch:
         call_args = self.mock_complete.call_args
         outputs = call_args.kwargs["outputs"]
 
-        assert outputs["search_result"] == self.mock_sample_data["samples"]
+        assert outputs["search_results"] == self.mock_sample_data["samples"]
 
         self.mock_ack.assert_called_once()
         self.mock_fail.assert_not_called()
@@ -117,7 +117,7 @@ class TestSearch:
         self.mock_complete.assert_called_once()
         call_args = self.mock_complete.call_args
         outputs = call_args.kwargs["outputs"]
-        assert outputs["search_result"] == []
+        assert outputs["search_results"] == []
 
         self.mock_ack.assert_called_once()
 
