@@ -90,12 +90,12 @@
 				}
 			},
 			"output_parameters": {
-				"search_result": {
+				"search_results": {
 					"type": "slack#/types/search_results",
 					"title": "Search Result",
 					"description": "An array containing the search results based on the inputs",
 					"is_required": true,
-					"name": "search_result"
+					"name": "search_results"
 				}
 			}
 		}
