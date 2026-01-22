@@ -54,7 +54,7 @@ def search_step_callback(
             for sample in samples
         ]
 
-        complete(outputs={"search_result": results})
+        complete(outputs={"search_results": results})
     except Exception as e:
         if isinstance(e, SlackResponseError):
             logger.error(f"Failed to fetch or parse sample data. Error details: {str(e)}", exc_info=e)
