@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bolt-python-search"
+version = "0.0.0"
+description = "Slack app using Bolt Python for search functionality"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+	"slack-bolt==1.27.0",
+	"pytest==9.0.2",
+	"ruff==0.14.10",
+]
+
+[tool.setuptools.packages.find]
+include = ["*"]
+
+[tool.ruff]
+line-length = 125
+
+[tool.ruff.lint]
+ignore = []
+select = [
+	# pycodestyle error
+	"E",
+	# pycodestyle warning
+	"W",
+	# Pyflakes
+	"F",
+	# isort
+	"I",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+log_file = "logs/pytest.log"
+log_file_level = "DEBUG"
+log_format = "%(asctime)s %(levelname)s %(message)s"
+log_date_format = "%Y-%m-%d %H:%M:%S"
