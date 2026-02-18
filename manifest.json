@@ -44,7 +44,7 @@
 	"functions": {
 		"filters": {
 			"title": "Sample filters",
-			"description": "The filter function is used to define the filters for search results",
+			"description": "Returns the filters for the search function",
 			"input_parameters": {
 				"user_context": {
 					"type": "slack#/types/user_context",
