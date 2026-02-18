@@ -1,10 +1,8 @@
 # Bolt for Python Search Template
 
-> ⚠️ **Beta Notice**: This template demonstrates search functionality that is currently in beta and not yet widely available to all developers. The features shown here are being tested and may change before general availability.
-
 This is a Slack app template for building search functionality using Bolt for Python. It demonstrates how to create custom functions for search and filtering capabilities.
 
-It's recommended to use a [Slack sandbox](https://docs.slack.dev/tools/developer-sandboxes/) for development and testing. Other workspaces may not have access to all these features. To get started:
+It's recommended to use a [developer sandbox](https://docs.slack.dev/tools/developer-sandboxes/) for development and testing. Other workspaces may not have access to all these features. To get started:
 
 1. Join the [Slack Developer Program](https://api.slack.com/developer-program) if you haven't already
 2. [Provision a sandbox workspace](https://docs.slack.dev/tools/developer-sandboxes/#provision)
