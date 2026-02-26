@@ -61,9 +61,9 @@ def entity_details_requested_callback(event: dict, client: WebClient, logger: lo
             json=payload,
         )
     except SlackResponseError as e:
-        logger.error(f"Failed to fetch or parse sample data. Error details: {str(e)}", exc_info=e)
+        logger.error(f"Failed to fetch or parse sample data. Error details: {e}", exc_info=e)
     except Exception as e:
         logger.error(
-            f"An unexpected error occurred handling entity_details_requested event: {type(e).__name__} - {str(e)}",
+            f"An unexpected error occurred handling entity_details_requested event: {type(e).__name__} - {e}",
             exc_info=e,
         )

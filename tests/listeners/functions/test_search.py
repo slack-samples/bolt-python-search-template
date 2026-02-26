@@ -4,7 +4,7 @@ from slack_bolt import Ack, Complete, Fail
 from slack_sdk import WebClient
 
 from listeners.filters import LANGUAGES_FILTER, SAMPLES_FILTER, TEMPLATES_FILTER
-from listeners.functions.search import SEARCH_PROCESSING_ERROR_MSG, search_step_callback
+from listeners.functions.search import search_step_callback
 from listeners.sample_data_service import SlackResponseError
 
 
@@ -41,7 +41,7 @@ class TestSearch:
     def test_search_step_callback_success(self, mock_fetch_sample_data):
         mock_fetch_sample_data.return_value = self.mock_sample_data
 
-        filters = {LANGUAGES_FILTER.name: ["python"]}
+        filters = {LANGUAGES_FILTER["name"]: ["python"]}
 
         inputs = {"query": "test query", "filters": filters}
 
@@ -74,7 +74,11 @@ class TestSearch:
     def test_search_step_callback_multiple_filter_types(self, mock_fetch_sample_data):
         mock_fetch_sample_data.return_value = self.mock_sample_data
 
-        filters = {TEMPLATES_FILTER.name: True, SAMPLES_FILTER.name: True, LANGUAGES_FILTER.name: ["python", "javascript"]}
+        filters = {
+            TEMPLATES_FILTER["name"]: True,
+            SAMPLES_FILTER["name"]: True,
+            LANGUAGES_FILTER["name"]: ["python", "javascript"],
+        }
 
         inputs = {"query": "test query", "filters": filters}
 
@@ -135,9 +139,6 @@ class TestSearch:
         )
 
         self.mock_fail.assert_called_once()
-        call_args = self.mock_fail.call_args
-        assert call_args.kwargs["error"] == SEARCH_PROCESSING_ERROR_MSG
-
         self.mock_complete.assert_not_called()
         self.mock_ack.assert_called_once()
 

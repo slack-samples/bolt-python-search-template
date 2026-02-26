@@ -48,7 +48,7 @@ class TestSampleDataService:
         assert result == self.mock_response
 
     def test_fetch_sample_data_with_languages_filter(self):
-        filters = {LANGUAGES_FILTER.name: ["python", "javascript"]}
+        filters = {LANGUAGES_FILTER["name"]: ["python", "javascript"]}
 
         result = fetch_sample_data(client=self.mock_client, query="test query", filters=filters, logger=self.mock_logger)
 
@@ -57,41 +57,44 @@ class TestSampleDataService:
         assert result == self.mock_response
 
     def test_fetch_sample_data_with_templates_filter(self):
-        filters = {TEMPLATES_FILTER.name: True}
+        filters = {TEMPLATES_FILTER["name"]: True}
 
         result = fetch_sample_data(client=self.mock_client, query="test query", filters=filters, logger=self.mock_logger)
 
         self.mock_client.api_call.assert_called_once_with(
-            API_METHOD, params={"query": "test query", "filters": {"type": TEMPLATES_FILTER.name}}
+            API_METHOD, params={"query": "test query", "filters": {"type": TEMPLATES_FILTER["name"]}}
         )
 
         assert result == self.mock_response
 
     def test_fetch_sample_data_with_samples_filter(self):
-        filters = {SAMPLES_FILTER.name: True}
+        filters = {SAMPLES_FILTER["name"]: True}
 
         result = fetch_sample_data(client=self.mock_client, query="test query", filters=filters, logger=self.mock_logger)
 
         self.mock_client.api_call.assert_called_once_with(
-            API_METHOD, params={"query": "test query", "filters": {"type": SAMPLES_FILTER.name}}
+            API_METHOD, params={"query": "test query", "filters": {"type": SAMPLES_FILTER["name"]}}
         )
 
         assert result == self.mock_response
 
     def test_fetch_sample_data_with_combined_filters(self):
-        filters = {LANGUAGES_FILTER.name: ["python"], TEMPLATES_FILTER.name: True}
+        filters = {LANGUAGES_FILTER["name"]: ["python"], TEMPLATES_FILTER["name"]: True}
 
         result = fetch_sample_data(client=self.mock_client, query="test query", filters=filters, logger=self.mock_logger)
 
         self.mock_client.api_call.assert_called_once_with(
             API_METHOD,
-            params={"query": "test query", "filters": {LANGUAGES_FILTER.name: ["python"], "type": TEMPLATES_FILTER.name}},
+            params={
+                "query": "test query",
+                "filters": {LANGUAGES_FILTER["name"]: ["python"], "type": TEMPLATES_FILTER["name"]},
+            },
         )
 
         assert result == self.mock_response
 
     def test_fetch_sample_data_with_both_template_and_sample(self):
-        filters = {TEMPLATES_FILTER.name: True, SAMPLES_FILTER.name: True}
+        filters = {TEMPLATES_FILTER["name"]: True, SAMPLES_FILTER["name"]: True}
 
         result = fetch_sample_data(client=self.mock_client, query="test query", filters=filters, logger=self.mock_logger)
 

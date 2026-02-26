@@ -39,3 +39,5 @@ logs/
 .pytype/
 .vscode
 .cursor
+.claude/
+AGENTS.md
