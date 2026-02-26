@@ -8,9 +8,7 @@ API_METHOD = "developer.sampleData.get"
 
 
 class SlackResponseError(Exception):
-    def __init__(self, message: str):
-        super().__init__(message)
-        self.name = "SlackResponseError"
+    pass
 
 
 def fetch_sample_data(client: WebClient, query: str = None, filters: dict = None, logger: logging.Logger = None):
@@ -19,18 +17,18 @@ def fetch_sample_data(client: WebClient, query: str = None, filters: dict = None
     if filters:
         selected_filters = {}
 
-        languages = filters.get(LANGUAGES_FILTER.name, [])
-        templates = filters.get(TEMPLATES_FILTER.name, False)
-        samples = filters.get(SAMPLES_FILTER.name, False)
+        languages = filters.get(LANGUAGES_FILTER["name"], [])
+        templates = filters.get(TEMPLATES_FILTER["name"], False)
+        samples = filters.get(SAMPLES_FILTER["name"], False)
 
         if languages:
-            selected_filters[LANGUAGES_FILTER.name] = languages
+            selected_filters[LANGUAGES_FILTER["name"]] = languages
 
         if templates ^ samples:
             if templates:
-                selected_filters["type"] = TEMPLATES_FILTER.name
+                selected_filters["type"] = TEMPLATES_FILTER["name"]
             elif samples:
-                selected_filters["type"] = SAMPLES_FILTER.name
+                selected_filters["type"] = SAMPLES_FILTER["name"]
 
         if selected_filters:
             params["filters"] = selected_filters

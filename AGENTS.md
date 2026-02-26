@@ -8,7 +8,7 @@ This is a Slack sample app demonstrating **Enterprise Search** using [Bolt for P
 - **README:** [README.md](./README.md) — setup instructions, environment variables, and project structure overview
 - **Docs:** [Enterprise Search](https://docs.slack.dev/surfaces/search)
 - **Framework:** Bolt for Python (`slack-bolt`)
-- **Runtime:** Python 3.11+, Socket Mode
+- **Runtime:** Python (see `requires-python` in `pyproject.toml`), Socket Mode
 
 ## Architecture
 
@@ -24,7 +24,7 @@ The app registers two **custom functions** (`search` and `filters`) and one **ev
 ### Data Flow
 
 1. **Filters request** → `listeners/functions/filters.py` returns predefined filter definitions (languages, templates, samples) from `listeners/filters.py`
-2. **Search request** → `listeners/functions/search.py` calls `fetch_sample_data()` from `listeners/sample_data_service.py`, which hits the `developer.sampleData.get` Slack API, then maps results to `SearchResult` typed dicts
+2. **Search request** → `listeners/functions/search.py` calls `fetch_sample_data()` from `listeners/sample_data_service.py`, which hits the `developer.sampleData.get` Slack API, then passes samples through as search results
 3. **Entity details** → `listeners/events/entity_details_requested.py` fetches sample data and presents entity details via `entity.presentDetails` API
 
 ## Key Files & Directories
@@ -35,7 +35,7 @@ manifest.json                       # Slack app manifest — defines functions, 
 pyproject.toml                      # Build config, dependencies, ruff + pytest settings
 listeners/
   __init__.py                       # register_listeners(app) — delegates to functions/ and events/
-  filters.py                        # Filter/FilterOptions dataclasses and predefined filter constants
+  filters.py                        # Predefined filter constants (plain dicts)
   sample_data_service.py            # fetch_sample_data() — calls developer.sampleData.get API
   functions/
     __init__.py                     # Registers search and filters function callbacks
@@ -60,6 +60,10 @@ tests/                              # Mirrors listeners/ structure
 
 ## Development Commands
 
+> **IMPORTANT: A Python virtual environment MUST be activated before running ANY command in this project.**
+> Before executing any command below, first verify the virtual environment is active by running `echo $VIRTUAL_ENV` — it MUST output a path.
+> If it outputs nothing, do NOT proceed. Ask the user to activate a virtual environment first.
+
 ```bash
 # Install dependencies (editable mode)
 pip install -e .
@@ -82,11 +86,9 @@ pytest .
 
 ## Code Style & Tooling
 
-- **Linter/Formatter:** Ruff (configured in `pyproject.toml`)
-  - Line length: 125
-  - Rules: `E` (pycodestyle errors), `W` (pycodestyle warnings), `F` (Pyflakes), `I` (isort)
-- **Testing:** pytest (test paths: `tests/`, logs to `logs/pytest.log`)
-- **Python:** 3.11+ required
+- **Linter/Formatter:** Ruff (see `[tool.ruff]` in `pyproject.toml` for line length, lint rules, and other settings)
+- **Testing:** pytest (see `[tool.pytest.ini_options]` in `pyproject.toml` for test paths and logging config)
+- **Python:** see `requires-python` in `pyproject.toml`
 
 ## CI Pipeline
 
@@ -107,16 +109,15 @@ pytest .
 
 ### Adding a new filter
 
-1. Define the filter constant in `listeners/filters.py` using the `Filter` dataclass
+1. Define the filter constant in `listeners/filters.py` as a plain dict
 2. Add it to the `complete(outputs=...)` list in `listeners/functions/filters.py`
 3. If it affects search, handle it in `listeners/sample_data_service.py`'s filter processing
 4. Add tests in `tests/listeners/functions/test_filters.py`
 
 ### Modifying search results
 
-1. Update `SearchResult` TypedDict in `listeners/functions/search.py` if adding fields
-2. Update the result mapping in `search_step_callback`
-3. Update tests in `tests/listeners/functions/test_search.py`
+1. Update `search_step_callback` in `listeners/functions/search.py`
+2. Update tests in `tests/listeners/functions/test_search.py`
 
 ### Fixing a bug
 

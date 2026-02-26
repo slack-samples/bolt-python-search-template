@@ -1,12 +1,8 @@
 {
 	"permissions": {
 		"allow": [
-			"Bash(ruff check:*)",
-			"Bash(ruff format:*)",
-			"Bash(pytest:*)",
-			"Bash(pip install:*)",
-			"Bash(python3 app.py:*)",
-			"Bash(slack run:*)",
+			"Bash(echo $VIRTUAL_ENV)",
+			"Bash(gh api:*)",
 			"Bash(gh issue view:*)",
 			"Bash(gh label list:*)",
 			"Bash(gh pr checks:*)",
@@ -16,19 +12,24 @@
 			"Bash(gh pr update-branch:*)",
 			"Bash(gh pr view:*)",
 			"Bash(gh search code:*)",
+			"Bash(git branch:*)",
 			"Bash(git diff:*)",
+			"Bash(git fetch:*)",
 			"Bash(git grep:*)",
 			"Bash(git log:*)",
 			"Bash(git show:*)",
 			"Bash(git status:*)",
 			"Bash(grep:*)",
 			"Bash(ls:*)",
+			"Bash(pip install:*)",
+			"Bash(pytest:*)",
+			"Bash(ruff check:*)",
+			"Bash(ruff format:*)",
 			"Bash(tree:*)",
-			"WebFetch(domain:github.com)",
-			"WebFetch(domain:raw.githubusercontent.com)",
-			"WebFetch(domain:docs.slack.dev)",
 			"WebFetch(domain:api.slack.com)",
-			"Bash(gh api:*)"
+			"WebFetch(domain:docs.slack.dev)",
+			"WebFetch(domain:github.com)",
+			"WebFetch(domain:raw.githubusercontent.com)"
 		]
 	}
 }
