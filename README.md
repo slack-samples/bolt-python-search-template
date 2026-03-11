@@ -92,6 +92,14 @@ python3 app.py
 
 </details>
 
+## Usage in Slack
+
+Even after apps that use Enterprise Search features are installed at the org level, they are not immediately available to end users or app collaborators by default.
+
+See [this page](https://docs.slack.dev/enterprise-search/enterprise-search-access-control) of the developer docs for more details, or jump straight to the Slack Help Center to [see the steps](https://slack.com/help/articles/39044407124755-Set-up-and-manage-Slack-enterprise-search#enable-or-disable-enterprise-search) an org owner or org admin needs to take to enable your app's search function as a data source.
+
+[Start a search](https://slack.com/help/articles/38693462131219-Search-across-your-applications-with-enterprise-search#start-a-search) to see `function_executed` event payloads sent to your app. Use the data source filter to only show matching results returned by your app.
+
 ## Linting
 
 ```sh
