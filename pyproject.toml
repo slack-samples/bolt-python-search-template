@@ -9,7 +9,7 @@ description = "Slack app using Bolt Python for search functionality"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-	"slack-bolt==1.27.0",
+	"slack-bolt==1.28.0",
 	"pytest==9.0.3",
 	"ruff==0.15.8",
 	"slack-cli-hooks<1",
