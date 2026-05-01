@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
 	"slack-bolt==1.27.0",
-	"pytest==9.0.2",
+	"pytest==9.0.3",
 	"ruff==0.15.8",
 	"slack-cli-hooks<1",
 ]
