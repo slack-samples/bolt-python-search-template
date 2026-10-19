@@ -33,7 +33,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 
 # Install the dependencies
-pip install -e . 
+pip install -e ".[dev]"
 ```
 
 #### Creating the Slack app
@@ -84,7 +84,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 
 # Install all the dependencies
-pip install -e . 
+pip install -e ".[dev]"
 
 # Start your local server
 python3 app.py
