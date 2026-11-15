@@ -39,4 +39,5 @@ logs/
 .pytype/
 .vscode
 .cursor
-.claude/
+.claude/*
+!.claude/skills/
